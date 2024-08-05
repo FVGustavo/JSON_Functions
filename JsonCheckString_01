@@ -4,7 +4,6 @@ int json_check_str(const char *json)
 {
   char st_len = strlen(json);
   const char *position = json + 1;
-  char *test_colon;
 
   if (st_len < 2 || json[0] != '{' || json[st_len - 1] != '}')
   {
@@ -16,26 +15,18 @@ int json_check_str(const char *json)
     return 0;
   }
 
-  test_colon = strchr(json, ':');
-
   if (st_len > 2)
   {
-    if (*position != '"' || json[st_len - 1] != '"')
+    if (*position != '"' || json[st_len - 2] != '"')
     {
       return -1;
     }
     else
     {
       position++;
+
       for (position; position < st_len - 1; position++)
       {
-        if (test_colon != NULL)
-        {
-          if ((*test_colon - 1) != '"' || (*test_colon + 1) != '"')
-          {
-            return -1;
-          }
-        }
         if (*position != '"')
         {
           return -1;

@@ -2,32 +2,32 @@
 
 int json_check_str(const char *json)
 {
-  char st_len = strlen(json);
+  char str_len = strlen(json);
   const char *position = json + 1;
   char *test_colon;
 
-  if (st_len < 2 || json[0] != '{' || json[st_len - 1] != '}')
+  if (str_len < 2 || json[0] != '{' || json[str_len - 1] != '}')
   {
     return -1;
   }
 
-  if (st_len == 2)
+  if (str_len == 2)
   {
     return 0;
   }
 
   test_colon = strchr(json, ':');
 
-  if (st_len > 2)
+  if (str_len > 2)
   {
-    if (*position != '"' || json[st_len - 1] != '"')
+    if (*position != '"' || json[str_len - 1] != '"')
     {
       return -1;
     }
     else
     {
       position++;
-      for (position; position < st_len - 1; position++)
+      for (position; position < str_len - 1; position++)
       {
         if (test_colon != NULL)
         {
@@ -56,6 +56,7 @@ int json_get_str(const char *json, const char *key, char *data, size_t *len)
 {
   int json_check = json_check_str(json);
   char json_test[64] = json;
+  char str_len = strlen(json_test);
   char *colon_check;
   colon_check = strchr(json_test, ':');
 
@@ -66,6 +67,7 @@ int json_get_str(const char *json, const char *key, char *data, size_t *len)
 
   else
   {
+    len = (size_t)str_len;
     if (len == NULL)
     {
       return -1;

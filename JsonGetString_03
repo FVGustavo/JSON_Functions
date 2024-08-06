@@ -1,0 +1,112 @@
+#include "json.h"
+
+char *json_get_value(const char *json, char *key);
+
+char *json_get_value(const char *json, char *key)
+{
+  char *delimiters = "{}:\"";
+  char *verify_key;
+  char *value_01;
+
+  verify_key = strstr(json, key);
+
+  if (verify_key != NULL)
+  {
+    value_01 = strtok(verify_key, delimiters);
+    value_01 = strtok(NULL, delimiters);
+    return value_01;
+  }
+
+  return NULL;
+}
+
+int json_check_str(const char *json)
+{
+  if (json == NULL)
+  {
+    return -1;
+  }
+
+  char st_len = strlen(json);
+  const char *position = json + 1;
+  char *colon_check;
+  colon_check = strchr(json, ':');
+
+  if (st_len < 2)
+  {
+    return -1;
+  }
+
+  if (json[0] != '{' || json[st_len - 1] != '}')
+  {
+    return -1;
+  }
+
+  if (st_len == 2)
+  {
+    return 0;
+  }
+
+  if (*position != '"' || json[st_len - 2] != '"')
+  {
+    return -1;
+  }
+  position++;
+
+  if (colon_check != NULL)
+  {
+    if (*(colon_check - 1) != '"' || *(colon_check + 1) != '"')
+    {
+      return -1;
+    }
+  }
+
+  if (json[2] == '"')
+  {
+    return -1;
+  }
+
+  for (; position < st_len - 1; position++)
+  {
+    if (*position != '"')
+    {
+      return -1;
+    }
+    else
+    {
+      return 0;
+    }
+  }
+  return 0;
+}
+
+int json_get_str(const char *json, const char *key, char *data, size_t *len)
+{
+  if (!len || !json)
+  {
+    return -1;
+  }
+
+  char *json_key = key;
+  char *json_data = json_get_value(json, json_key);
+
+  if (json_data == NULL)
+  {
+    return -1;
+  }
+
+  *len = strlen(json_data);
+
+  if (!data)
+  {
+    return 0;
+  }
+
+  memcpy(data, json_data, *len);
+
+  return 0;
+}
+
+int json_get_int(const char *json, const char *key, int *value)
+{
+}

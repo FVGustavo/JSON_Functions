@@ -1,0 +1,118 @@
+int json_check_str(const char* json){
+  if(json == NULL){
+    #ifdef DEBUG_JSON
+    printf("json is NULL\n");
+    #endif
+    return -1;
+  }
+
+  size_t st_len = strlen(json);
+  if(st_len < 2){
+    #ifdef DEBUG_JSON
+    printf("json is too small\n");
+    #endif
+    return -1;
+  }
+
+  if(json[0] != '{' || json[st_len - 1] != '}'){
+    #ifdef DEBUG_JSON
+    printf("json doesn't start or end with brackets\n");
+    #endif
+    return -1;
+  }
+
+  if(json[2] == '"'){
+    #ifdef DEBUG_JSON
+    printf("json key is NULL\n");
+    #endif
+    return -1;
+  }
+
+  const char *position = json + 1;
+  while (position < json + st_len - 1){ 
+    while (*position == ' ' || *position == '\n' || *position == '\t') {
+      position++;
+    }
+
+    if(*position != '"'){
+      #ifdef DEBUG_JSON
+      printf("json key doesn't start with quotes\n");
+      #endif
+      return -1;
+    }
+
+    position++;
+
+    while(*position != '"'){
+      if(position >= json + st_len - 1){
+        #ifdef DEBUG_JSON
+        printf("json key doesn't end with quotes\n");
+        #endif
+        return -1;
+      }
+      position++;
+    }
+
+    position++; 
+
+    while (*position == ' ' || *position == '\n' || *position == '\t') {
+      position++;
+    }
+
+    if(*position != ':'){
+      #ifdef DEBUG_JSON
+      printf("json doesn't have a colon after key\n");
+      #endif
+      return -1;
+    }
+
+    position++; 
+
+    while (*position == ' ' || *position == '\n' || *position == '\t') {
+      position++;
+    }
+
+    if(*position == '"'){
+      position++; 
+      while(*position != '"'){
+        if (position >= json + st_len - 1) {
+          #ifdef DEBUG_JSON
+          printf("json value doesn't end with quotes\n");
+          #endif
+          return -1;
+        }
+        position++;
+      }
+      position++;
+      }else if(!isNum(*position) && *position != '-' && *position != 't' && *position != 'f' && *position != 'n'){
+        #ifdef DEBUG_JSON
+        printf("json value is neither a string nor a valid number/boolean/null\n");
+        #endif
+        return -1;
+      }else{
+        while(isNum(*position) || *position == '.' || *position == 'e' || *position == 'E' || *position == '-' 
+        || *position == 't' || *position == 'r' || *position == 'u' || *position == 'f' || *position == 'a' 
+        || *position == 'l' || *position == 's' || *position == 'n'){
+          position++;
+        }
+      }
+
+      while(*position == ' ' || *position == '\n' || *position == '\t'){
+        position++;
+      }
+
+      if(*position == ','){
+        position++; 
+        continue;
+      }
+
+      if (*position != '}'){
+        #ifdef DEBUG_JSON
+        printf("json does not properly close with a bracket\n");
+        #endif
+        return -1;
+      }
+  }
+
+  return 0; 
+}

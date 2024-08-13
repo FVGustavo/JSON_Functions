@@ -93,13 +93,13 @@ int json_check_str(const char* json){
         position++;
       }
       position++;
-      }else if(!isNum(*position) && *position != '-' && *position != 't' && *position != 'f' && *position != 'n'){
+      }else if(!is_num(*position) && *position != '-' && *position != 't' && *position != 'f' && *position != 'n'){
         #ifdef DEBUG_JSON
         printf("json value is neither a string nor a valid number/boolean/null\n");
         #endif
         return -1;
       }else{
-        while(isNum(*position) || *position == 'n' || *position == 't' || *position == 'f'){
+        while(is_num(*position) || *position == 'n' || *position == 't' || *position == 'f'){
           position++;
         }
       }

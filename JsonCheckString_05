@@ -1,3 +1,10 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define DEBUG_JSON
+
 int json_check_str(const char* json){
   if(json == NULL){
     #ifdef DEBUG_JSON
@@ -21,14 +28,8 @@ int json_check_str(const char* json){
     return -1;
   }
 
-  if(json[2] == '"'){
-    #ifdef DEBUG_JSON
-    printf("json key is NULL\n");
-    #endif
-    return -1;
-  }
-
   const char *position = json + 1;
+  
   while (position < json + st_len - 1){ 
     while (*position == ' ' || *position == '\n' || *position == '\t') {
       position++;
@@ -42,6 +43,7 @@ int json_check_str(const char* json){
     }
 
     position++;
+    const char* key_start = position;
 
     while(*position != '"'){
       if(position >= json + st_len - 1){
@@ -51,6 +53,13 @@ int json_check_str(const char* json){
         return -1;
       }
       position++;
+    }
+
+    if(key_start == position){
+      #ifdef DEBUG_JSON
+      printf("json key is empty\n");
+      #endif
+      return -1;
     }
 
     position++; 
@@ -75,7 +84,7 @@ int json_check_str(const char* json){
     if(*position == '"'){
       position++; 
       while(*position != '"'){
-        if (position >= json + st_len - 1) {
+        if(position >= json + st_len - 1){
           #ifdef DEBUG_JSON
           printf("json value doesn't end with quotes\n");
           #endif
@@ -90,9 +99,7 @@ int json_check_str(const char* json){
         #endif
         return -1;
       }else{
-        while(isNum(*position) || *position == '.' || *position == 'e' || *position == 'E' || *position == '-' 
-        || *position == 't' || *position == 'r' || *position == 'u' || *position == 'f' || *position == 'a' 
-        || *position == 'l' || *position == 's' || *position == 'n'){
+        while(isNum(*position) || *position == 'n' || *position == 't' || *position == 'f'){
           position++;
         }
       }
